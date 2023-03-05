@@ -1,0 +1,1 @@
+Each Sprite is 20 x 24 pixels. There are 4 columns and 1 row for the whole sprite sheet

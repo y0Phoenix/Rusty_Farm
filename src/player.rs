@@ -1,25 +1,25 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::{Collider, RigidBody, ExternalForce, Damping, ActiveEvents};
 
-use crate::{AnimationTimer, Velocity, MoveDirection};
+use crate::{AnimationTimer, EntityVelocity, MoveDirection};
 
 
 pub struct Movement {
     running: bool,
-    velocity: Velocity
+    velocity: EntityVelocity
 }
 
 impl Movement {
     fn default() -> Self {
-        Self { running: false, velocity: Velocity(Vec2::new(1., 1.)) }
+        Self { running: false, velocity: EntityVelocity(Vec2::new(1., 1.)) }
     }
     fn set_running(&mut self) {
         self.running = true;
-        self.velocity = Velocity(Vec2::new(1.25, 1.25))
+        self.velocity = EntityVelocity(Vec2::new(1.25, 1.25))
     }
     fn set_walking(&mut self) {
         self.running = false;
-        self.velocity = Velocity(Vec2::new(1., 1.))
+        self.velocity = EntityVelocity(Vec2::new(1., 1.))
     } 
     fn is_running(&self) -> bool {
         self.running

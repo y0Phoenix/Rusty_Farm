@@ -62,7 +62,7 @@ impl MoveDirection {
 
 
 #[derive(Component, Deref, DerefMut)]
-pub struct Velocity(Vec2);
+pub struct EntityVelocity(Vec2);
 
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimer(Timer);
@@ -72,7 +72,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(40.0))
-        .add_plugin(RapierDebugRenderPlugin::default())
+        // .add_plugin(RapierDebugRenderPlugin::default())
         .insert_resource(RapierConfiguration {
             gravity: Vec2::ZERO,
             ..Default::default()

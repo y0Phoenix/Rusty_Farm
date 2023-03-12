@@ -1,8 +1,12 @@
 use bevy::prelude::*;
+use bevy_animations::{Animations, AnimationType, TransformAnimation, AnimationDirectionIndexes, AnimationEvent, AnimationDirection, TimedAnimation};
 use bevy_rapier2d::prelude::{Collider, RigidBody, ExternalForce, Damping, ActiveEvents};
 
 use crate::{AnimationTimer, EntityVelocity, MoveDirection, crop::{CropCollider, self}};
 
+const WALKING_ANIMATION_FRAMES: [usize; 6] = [0, 1, 2, 3, 4, 5];
+const RUNNUNG_ANIMATION_FRAMES: [usize; 6] = [0, 1, 6, 3, 4, 7];
+const HARVESTING_ANIMATION_FRAMES: [usize; 4] = [0, 1, 2, 3]; 
 
 pub struct Movement {
     running: bool,
@@ -11,7 +15,7 @@ pub struct Movement {
 
 impl Movement {
     fn default() -> Self {
-        Self { running: false, velocity: EntityVelocity(Vec2::new(1., 1.)) }
+        Self { running: false, velocity: EntityVelocity(Vec2::new(0.85, 0.85)) }
     }
     fn set_running(&mut self) {
         self.running = true;
@@ -19,7 +23,7 @@ impl Movement {
     }
     fn set_walking(&mut self) {
         self.running = false;
-        self.velocity = EntityVelocity(Vec2::new(1., 1.))
+        self.velocity = EntityVelocity(Vec2::new(0.85, 0.85))
     } 
     fn is_running(&self) -> bool {
         self.running
@@ -28,19 +32,13 @@ impl Movement {
 
 #[derive(Component)]
 pub struct Player {
-    in_animation: bool,
     movement: Movement,
-    animation_tick: usize,
-    dir: MoveDirection
 }
 
 impl Player {
     fn new() -> Self {
         Self { 
-            in_animation: false,
-            movement: Movement::default(), 
-            animation_tick: 0, 
-            dir: MoveDirection::Still 
+            movement: Movement::default(),
         }
     }
 }
@@ -57,13 +55,21 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn player_setup(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>) {
+fn player_setup(
+    mut commands: Commands, 
+    asset_server: Res<AssetServer>, 
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut animations: ResMut<Animations>
+) {
     let farmer = asset_server.load("farmer/char_a_p1_0bas_humn_v00.png");
-    let texture_atlas = TextureAtlas::from_grid(farmer, Vec2::new(64., 64.), 8, 8, None, None);
-    let texture_atlas_handle = texture_atlases.add(texture_atlas);
-    commands.spawn((
+    let farming = asset_server.load("farmer/farming_animation.png");
+    let farmer_texture_atlas = TextureAtlas::from_grid(farmer, Vec2::new(64., 64.), 8, 8, None, None);
+    let farming_texture_atlas = TextureAtlas::from_grid(farming, Vec2::new(64., 64.), 4, 4, None, None);
+    let farmer_atlas_handle = texture_atlases.add(farmer_texture_atlas);
+    let farming_atlas_handle = texture_atlases.add(farming_texture_atlas);
+    let entity = commands.spawn((
         SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle,
+            texture_atlas: farmer_atlas_handle.clone(),
             transform: Transform::from_translation(Vec3::new(-100., -100., 0.)),
             ..Default::default()
         },
@@ -79,14 +85,58 @@ fn player_setup(mut commands: Commands, asset_server: Res<AssetServer>, mut text
             linear_damping: 100.,
             angular_damping: 100.
         },
-        ActiveEvents::COLLISION_EVENTS
-    ));
+        ActiveEvents::COLLISION_EVENTS,
+        AnimationDirection::default()
+    )).id();
+
+    animations
+        .insert_animation(entity, AnimationType::Transform(
+            TransformAnimation::new(
+                Vec::from(WALKING_ANIMATION_FRAMES), 
+                0.65, 
+                farmer_atlas_handle.clone(), 
+                Vec2::new(8., 8.), 
+                AnimationDirectionIndexes::new(8, 7, 6, 5), 
+                true
+            ), 
+            "player_walking"
+            )
+        )
+        .insert_animation(entity, AnimationType::Transform(
+            TransformAnimation::new(
+                Vec::from(RUNNUNG_ANIMATION_FRAMES), 
+                0.70, 
+                farmer_atlas_handle, 
+                Vec2::new(8., 8.), 
+                AnimationDirectionIndexes::new(8, 7, 6, 5), 
+                true
+            ), 
+            "player_running"
+            )
+        )
+        .insert_animation(entity, AnimationType::Timed(
+            TimedAnimation::new(
+                Vec::from(HARVESTING_ANIMATION_FRAMES), 
+                vec![0.001, 0.300, 0.350, 0.375], 
+                farming_atlas_handle, 
+                Vec2::new(4., 4.), 
+                AnimationDirectionIndexes::new(4, 3, 2, 1), 
+                false, 
+                true, 
+                1
+            ), 
+            "player_harvesting"
+            )
+        )
+    ;
 }
 
 fn check_crop_collision(
     mut commands: Commands,
     mut crop_collider: ResMut<CropCollider>,
-    inputs: Res<Input<KeyCode>>
+    player_query: Query<Entity, With<Player>>,
+    inputs: Res<Input<KeyCode>>,
+    mut event_writer: EventWriter<AnimationEvent>
 ) {
     let inputs = inputs.get_pressed();
 
@@ -100,6 +150,7 @@ fn check_crop_collision(
 
     if input {
         if let Some(crop_entity) = crop_collider.collider {
+            event_writer.send(AnimationEvent("player_harvesting", player_query.single()));
             commands.entity(crop_entity).despawn();
             *crop_collider = CropCollider::default();
         } 
@@ -109,102 +160,46 @@ fn check_crop_collision(
 fn move_player(
     time: Res<Time>,
     mut query: Query<(
-        &mut TextureAtlasSprite, 
+        Entity,
         &mut Transform,
         &mut AnimationTimer,
-        &mut Player
+        &mut Player,
+        &mut AnimationDirection
     )>, 
-    keyboard_input: Res<Input<KeyCode>>
+    keyboard_input: Res<Input<KeyCode>>,
+    mut event_writer: EventWriter<AnimationEvent>
 ) {
-    let (mut sprite, mut transform, mut timer, mut player) = query.single_mut();
+    let (entity, mut transform, mut timer, mut player, mut direction) = query.single_mut();
     timer.tick(time.delta());
-    if player.in_animation {
-        return;
-    }
+
     let inputs = keyboard_input.get_pressed();
 
-    let mut dir = MoveDirection::Still;
+    player.movement.set_walking();
+
+    let mut dir = AnimationDirection::Still;
 
     inputs.for_each(|key| {
         match *key {
-            KeyCode::A => dir = MoveDirection::Left,
-            KeyCode::D => dir = MoveDirection::Right,
-            KeyCode::W => dir = MoveDirection::Up,
-            KeyCode::S => dir = MoveDirection::Down,
+            KeyCode::A => dir = AnimationDirection::Left,
+            KeyCode::D => dir = AnimationDirection::Right,
+            KeyCode::W => dir = AnimationDirection::Up,
+            KeyCode::S => dir = AnimationDirection::Down,
             KeyCode::LShift => player.movement.set_running(),
             _ => {}
         }
     });
 
-    if dir == MoveDirection::Still {
-        let index = match player.dir {
-            MoveDirection::Left => 3,
-            MoveDirection::Right => 2,
-            MoveDirection::Up => 1,
-            MoveDirection::Down => 0,
-            MoveDirection::Still => 0
-        };
-        sprite.index = index * 8;
-        return;
+    *direction = dir;
+
+    if player.movement.is_running() {
+        event_writer.send(AnimationEvent("player_running", entity));
     }
-
-    player.dir = dir;
-
-    let x_index = 
-        if player.movement.is_running() {
-            // if the player is starting to run 
-            if player.animation_tick < 6 {
-                6
-            }
-            // if the player is running cycle to second running sprite
-            else if player.animation_tick == 6 {
-                7
-            }
-            // if the player is running cycle to first sprite
-            else {
-                6
-            }
-        }
-        else {
-            // if reached the end of walking sprites
-            if player.animation_tick == 5 || player.animation_tick > 5 {
-                0
-            }
-            // if haven't reached end of walking sprites
-            else {
-                player.animation_tick + 1
-            }
-        };
-
-        let y_index = 
-            // if the player is moving left
-            if dir == MoveDirection::Left {
-                8
-            }
-            // if the player is moveing right
-            else if dir == MoveDirection::Right {
-                7
-            }
-            // if the player is moving up
-            else if dir == MoveDirection::Up {
-                6
-            }
-            // if the player is still or down 
-            else {
-                5
-            } as usize;
+    else {
+        event_writer.send(AnimationEvent("player_walking", entity));
+    }
 
     let translation = transform.translation;
     *transform = Transform::from_translation(Vec3::new(
-        translation.x + MoveDirection::get_direction(&dir).x * player.movement.velocity.x, translation.y + MoveDirection::get_direction(&dir).y * player.movement.velocity.y, 0.));
-    if timer.finished() {
-        player.movement.set_walking();
-        player.animation_tick = x_index;
-        timer.reset();
-        // println!("x: {}, y: {}, total: {}, dir: {:?}", x_index, y_index, y_index as i32 - x_index as i32, dir);
-        sprite.index = (y_index * 8) - (8 - x_index);
-    }
-    else if player.dir != dir {
-        sprite.index = y_index * 7;
-    }
+    translation.x + AnimationDirection::get_direction(&direction).x * player.movement.velocity.x, translation.y + AnimationDirection::get_direction(&direction).y * player.movement.velocity.y, 0.));
+    
 }

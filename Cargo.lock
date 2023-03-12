@@ -209,6 +209,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_animations"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "01cab64188bec8d265a176d62591b7e237a58cfca14c250b6d5fcbb07c3faf8c"
+dependencies = [
+ "bevy",
+ "bevy_animations_macros",
+]
+
+[[package]]
+name = "bevy_animations_macros"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c6da682c4bd0543dcf0957c2fde21255861ba847559498b10cf52691ad8527e"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "bevy_app"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2673,6 +2693,7 @@ name = "rusty_farm"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "bevy_animations",
  "bevy_rapier2d",
 ]
 

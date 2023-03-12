@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 bevy = "0.9.1"
+bevy_animations = "0.1.7"
 bevy_rapier2d = "0.20.0"

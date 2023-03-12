@@ -82,7 +82,7 @@ fn main() {
         .add_startup_system(setup)
         .insert_resource(ClearColor(Color::hex("005500").unwrap()))
         .add_system(bevy::window::close_on_esc)
-        .add_system(display_events)
+        // .add_system(display_events)
         .run();
 }
 

@@ -1,7 +1,7 @@
 use bevy::prelude::*;
-use bevy_rapier2d::{prelude::{Collider, RigidBody, ExternalForce, Damping, ActiveEvents, Sensor}, na::Scale};
+use bevy_rapier2d::{prelude::{Collider, RigidBody, ExternalForce, Damping, ActiveEvents, Sensor, RapierContext}, na::Scale};
 
-use crate::{EDGE_BUFFER, AnimationTimer};
+use crate::{EDGE_BUFFER, AnimationTimer, player::Player};
 
 const PLANT_SPACING: f32 = 32.;
 
@@ -27,11 +27,17 @@ impl Crop {
     }
 }
 
+#[derive(Default, Resource)]
+pub struct CropCollider {
+    pub collider: Option<Entity>
+}
+
 pub struct CropPlugin;
 
 impl Plugin for CropPlugin {
     fn build(&self, app: &mut App) {
         app
+            .insert_resource(CropCollider::default())
             .add_startup_system(crop_setup)
             .add_system(crop_lifetimes)
         ;
@@ -83,7 +89,6 @@ fn crop_setup(
                     linear_damping: 100.,
                     angular_damping: 100.
                 })
-                .insert(Sensor)
                 .insert(ActiveEvents::COLLISION_EVENTS)
                 .insert(Crop::new(CropType::Corn))
                 .insert(AnimationTimer(Timer::from_seconds(5., TimerMode::Repeating)))
@@ -97,12 +102,26 @@ fn crop_lifetimes(
     mut crop_query: Query<(
         &mut AnimationTimer,
         &mut Crop,
-        &mut TextureAtlasSprite
+        &mut TextureAtlasSprite,
+        Entity
     )>,
-
+    context: Res<RapierContext>,
+    player_query: Query<Entity, With<Player>>,
+    mut crop_colider: ResMut<CropCollider>
 ) {
+    let player_entity = player_query.single();
+
+    let mut colliosion = false;
+
     for crop in crop_query.iter_mut() {
-        let (mut timer, mut crop, mut sprite) = crop;
+        let (mut timer, mut crop, mut sprite, crop_entity) = crop;
+
+        if let Some(_) = context.contact_pair(player_entity, crop_entity) {
+            colliosion = true;
+            if crop_colider.collider != Some(crop_entity){
+                crop_colider.collider = Some(crop_entity);
+            }
+        }
         
         if crop.stage + 1 <= 5 {
             timer.tick(time.delta());
@@ -112,5 +131,8 @@ fn crop_lifetimes(
                 crop.stage += 1;
             }
         }
+    }
+    if !colliosion {
+        *crop_colider = CropCollider::default();
     }
 }

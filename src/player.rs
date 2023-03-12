@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::{Collider, RigidBody, ExternalForce, Damping, ActiveEvents};
 
-use crate::{AnimationTimer, EntityVelocity, MoveDirection};
+use crate::{AnimationTimer, EntityVelocity, MoveDirection, crop::{CropCollider, self}};
 
 
 pub struct Movement {
@@ -27,7 +27,7 @@ impl Movement {
 }
 
 #[derive(Component)]
-struct Player {
+pub struct Player {
     in_animation: bool,
     movement: Movement,
     animation_tick: usize,
@@ -51,7 +51,8 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app
             .add_startup_system(player_setup)
-            .add_system(move_player)
+            .add_system(check_crop_collision.label("check_crop_collision"))
+            .add_system(move_player.after("chech_crop_collsion"))
         ;
     }
 }
@@ -80,6 +81,29 @@ fn player_setup(mut commands: Commands, asset_server: Res<AssetServer>, mut text
         },
         ActiveEvents::COLLISION_EVENTS
     ));
+}
+
+fn check_crop_collision(
+    mut commands: Commands,
+    mut crop_collider: ResMut<CropCollider>,
+    inputs: Res<Input<KeyCode>>
+) {
+    let inputs = inputs.get_pressed();
+
+    let mut input = false;
+
+    for key in inputs {
+        if *key == KeyCode::Space {
+            input = true;
+        }
+    }
+
+    if input {
+        if let Some(crop_entity) = crop_collider.collider {
+            commands.entity(crop_entity).despawn();
+            *crop_collider = CropCollider::default();
+        } 
+    }
 }
 
 fn move_player(

@@ -1,12 +1,13 @@
 use bevy::prelude::*;
-use bevy_animations::{Animations, AnimationType, TransformAnimation, AnimationDirectionIndexes, AnimationEvent, AnimationDirection, TimedAnimation};
+// use bevy_animations::*;
+use crate::animations::*;
 use bevy_rapier2d::prelude::{Collider, RigidBody, ExternalForce, Damping, ActiveEvents};
 
-use crate::{AnimationTimer, EntityVelocity, MoveDirection, crop::{CropCollider, self}};
+use crate::{AnimationTimer, EntityVelocity, crop::{CropCollider, self}};
 
-const WALKING_ANIMATION_FRAMES: [usize; 6] = [0, 1, 2, 3, 4, 5];
-const RUNNUNG_ANIMATION_FRAMES: [usize; 6] = [0, 1, 6, 3, 4, 7];
-const HARVESTING_ANIMATION_FRAMES: [usize; 4] = [0, 1, 2, 3]; 
+pub const WALKING_ANIMATION_FRAMES: [usize; 6] = [0, 1, 2, 3, 4, 5];
+pub const RUNNUNG_ANIMATION_FRAMES: [usize; 6] = [0, 1, 6, 3, 4, 7];
+pub const HARVESTING_ANIMATION_FRAMES: [usize; 4] = [0, 1, 2, 3]; 
 
 pub struct Movement {
     running: bool,

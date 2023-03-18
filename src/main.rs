@@ -1,27 +1,19 @@
 use bevy::prelude::*;
 // use bevy_animations::*;
-use crate::animations::*;
-use crop::CropPlugin;
-use player::PlayerPlugin;
+use crate::{bevy_animations::*, player::*, crop::*};
 use bevy_rapier2d::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use ldtk::FarmWorldPlugin;
 
 mod player;
+mod path;
 mod crop;
 mod ldtk;
+mod bevy_animations;
+mod gate;
 mod animations;
 
 pub const EDGE_BUFFER: f32 = 25.;
-
-#[derive(PartialEq, Eq, Debug, Clone, Copy)]
-pub enum MoveDirection {
-    Left,
-    Right,
-    Up,
-    Down,
-    Still
-}
 
 /* A system that displays the events. */
 fn display_events(
@@ -34,35 +26,6 @@ fn display_events(
 
     for contact_force_event in contact_force_events.iter() {
         println!("Received contact force event: {:?}", contact_force_event);
-    }
-}
-
-impl MoveDirection {
-    fn get_direction(direction: &Self) -> Vec2 {
-        match direction {
-            MoveDirection::Left => Vec2::new(-1., 0.),
-            MoveDirection::Right => Vec2::new(1., 0.),
-            MoveDirection::Up => Vec2::new(0., 1.),
-            MoveDirection::Down => Vec2::new(0., -1.),
-            MoveDirection::Still => Vec2::new(0., 0.),
-        }
-    }
-    fn from(vector: Vec2) -> Self {
-        if vector.x == -1. && vector.y == 0. {
-            MoveDirection::Left
-        }
-        else if vector.x == 1. && vector.y == 0. {
-            MoveDirection::Right
-        }
-        else if vector.x == 0. && vector.y == 1. {
-            MoveDirection::Up
-        }
-        else if vector.x == 0. && vector.y == -1. {
-            MoveDirection::Down
-        }
-        else {
-            MoveDirection::Still
-        }
     }
 }
 
@@ -88,16 +51,16 @@ fn main() {
             gravity: Vec2::ZERO,
             ..Default::default()
         })
-        // .add_plugin(PlayerPlugin)
+        .add_plugin(PlayerPlugin)
         // .add_plugin(CropPlugin)
-        // .add_startup_system(setup)
+        .add_startup_system(setup)
         // .insert_resource(ClearColor(Color::hex("005500").unwrap()))
         .add_system(bevy::window::close_on_esc)
         // .add_system(display_events)
         .run();
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut windows: ResMut<Windows>, mut texture_atlases: ResMut<Assets<TextureAtlas>>) {
+fn setup(mut commands: Commands, mut windows: ResMut<Windows>) {
     commands.spawn(Camera2dBundle::default());
 
     // let ldtk_handle = asset_server.load("Rusty_Farm_World_2.ldtk");

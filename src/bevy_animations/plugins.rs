@@ -1,6 +1,6 @@
 use bevy::{prelude::*};
 
-use crate::animations::*;
+use crate::bevy_animations::*;
 
 /// A plugin for Bevy that adds support for animations.
 /// You Can Add This Plugin To Your Bevy Game Like This

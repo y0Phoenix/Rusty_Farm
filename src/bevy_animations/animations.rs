@@ -1,4 +1,4 @@
-use crate::animations::*;
+use crate::bevy_animations::*;
 
 // This is Primarily for This Is Primarily For Animations on players or NPCs, for example shooting a bow or reloading a gun 
 #[derive(Clone, Debug, Default)]

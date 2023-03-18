@@ -1,4 +1,4 @@
-use crate::animations::*;
+use crate::bevy_animations::*;
 use crate::*;
 
 pub type AnimationName = &'static str;

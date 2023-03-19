@@ -11,6 +11,7 @@ pub struct PathBundle {
     path: Path,
     #[bundle]
     pub sensor_bundle: SensorBundle,
+    pub ldtk: Ldtk
 }
 impl LdtkIntCell for PathBundle {
     fn bundle_int_cell(_: IntGridCell, _: &LayerInstance) -> Self {
@@ -20,7 +21,8 @@ impl LdtkIntCell for PathBundle {
                 collider: Collider::cuboid(12., 12.), 
                 sensor: Sensor, 
                 ..Default::default()
-            }
+            },
+            ldtk: Ldtk
         }
     }
 }
@@ -32,6 +34,7 @@ pub struct SmallPathBundle {
     path: SmallPath,
     #[bundle]
     pub sensor_bundle: SensorBundle,
+    pub ldtk: Ldtk
 }
 
 impl LdtkIntCell for SmallPathBundle {
@@ -42,7 +45,8 @@ impl LdtkIntCell for SmallPathBundle {
                 collider: Collider::cuboid(12., 12.), 
                 sensor: Sensor, 
                 ..Default::default()
-            }
+            },
+            ldtk: Ldtk
         }
     }
 }

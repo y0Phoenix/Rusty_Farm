@@ -1,20 +1,25 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
-use crate::{bevy_animations::*, ldtk::*};
+use crate::{bevy_animations::*, ldtk::*, GameState};
 
 use self::systems::*;
 
 pub mod systems;
+
+pub const PLAYER_WALKING_VEL: f32 = 0.90;
+pub const PLAYER_RUNNUNG_VEL: f32 = 1.25;
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_system(movement)
-            .add_system(check_gate_collisions)
-            .add_system(center_camera_around_player)
+            .add_system_set(SystemSet::on_update(GameState::Loaded)
+                .with_system(movement)
+                .with_system(check_gate_collisions)
+                .with_system(center_camera_around_player)
+            )
         ;
     }
 }
@@ -30,7 +35,8 @@ pub struct LdtkPlayer {
     #[bundle]
     pub collider_bundle: ColliderBundle,
     entity_instance: EntityInstance,
-    pub direction: AnimationDirection
+    pub direction: AnimationDirection,
+    pub ldtk: Ldtk
 }
 
 impl LdtkEntity for LdtkPlayer {
@@ -39,20 +45,9 @@ impl LdtkEntity for LdtkPlayer {
             _: &LayerInstance,
             _: Option<&Handle<Image>>,
             _: Option<&TilesetDefinition>,
-            asset_server: &AssetServer,
-            texture_atlases: &mut Assets<TextureAtlas>,
+            _: &AssetServer,
+            _: &mut Assets<TextureAtlas>,
         ) -> LdtkPlayer {
-        let texture = asset_server.load("farmer/char_a_p1_0bas_humn_v00.png");
-
-        let texture_atlas = TextureAtlas::from_grid(texture, Vec2::new(64., 64.), 8, 8, None, None);
-
-        let handle = texture_atlases.add(texture_atlas);
-
-        let bundle = SpriteSheetBundle {
-            texture_atlas: handle,
-            ..Default::default()
-        };
-
         let fields = &entity_instance.field_instances;
 
         let mut linvel = 0.;
@@ -65,7 +60,7 @@ impl LdtkEntity for LdtkPlayer {
             }
         }
         LdtkPlayer { 
-            sprite_sheet_bundle: bundle,
+            sprite_sheet_bundle: SpriteSheetBundle::default(),
             player: Player,
             collider_bundle: ColliderBundle { 
                 collider: Collider::cuboid(8., 18.), 
@@ -79,7 +74,8 @@ impl LdtkEntity for LdtkPlayer {
                 ..Default::default()
             } ,
             entity_instance: entity_instance.clone(),
-            direction: AnimationDirection::default()
+            direction: AnimationDirection::default(),
+            ldtk: Ldtk
         }
     }
 }

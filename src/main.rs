@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_asset_loader::prelude::*;
 // use bevy_animations::*;
 use crate::{bevy_animations::*, player::*, crop::*};
 use bevy_rapier2d::prelude::*;
@@ -12,6 +13,15 @@ mod ldtk;
 mod bevy_animations;
 mod gate;
 mod animations;
+
+#[derive(Clone, Eq, PartialEq, Debug, Hash, Default)]
+pub enum GameState {
+    #[default]
+    LoadingAssets,
+    LoadingLdtk,
+    LoadingAnimations,
+    Loaded
+}
 
 pub const EDGE_BUFFER: f32 = 25.;
 
@@ -29,17 +39,32 @@ fn display_events(
     }
 }
 
+#[derive(AssetCollection, Resource)]
+pub struct LdtkAssets {
+    #[asset(path = "Rusty_Farm_World.ldtk")]
+    ldtk_world: Handle<LdtkAsset>
+}
 
-#[derive(Component, Deref, DerefMut)]
-pub struct EntityVelocity(Vec2);
-
-#[derive(Component, Deref, DerefMut)]
-pub struct AnimationTimer(Timer);
-
+#[derive(AssetCollection, Resource)]
+pub struct OtherAssets {
+    #[asset(path = "farmer/farming_animation.png")]
+    player_farming: Handle<Image>,
+    #[asset(path = "farmer/char_a_p1_0bas_humn_v00.png")]
+    player: Handle<Image>,
+    #[asset(path = "buildings/fence_gate.png")]
+    gate: Handle<Image>,
+}
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
+        .add_state::<GameState>(GameState::default())
+        .add_loading_state(
+            LoadingState::new(GameState::LoadingAssets)
+                .continue_to_state(GameState::LoadingLdtk)
+                .with_collection::<LdtkAssets>()
+                .with_collection::<OtherAssets>()
+        )
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(20.0))
         .add_plugin(AnimationsPlugin {
             pixels_per_meter: 20.
@@ -53,8 +78,10 @@ fn main() {
         })
         .add_plugin(PlayerPlugin)
         // .add_plugin(CropPlugin)
+        // .add_system_set(SystemSet::on_enter(GameState::Loaded)
+        //     .with_system(setup)
+        // )
         .add_startup_system(setup)
-        // .insert_resource(ClearColor(Color::hex("005500").unwrap()))
         .add_system(bevy::window::close_on_esc)
         // .add_system(display_events)
         .run();
@@ -62,16 +89,6 @@ fn main() {
 
 fn setup(mut commands: Commands, mut windows: ResMut<Windows>) {
     commands.spawn(Camera2dBundle::default());
-
-    // let ldtk_handle = asset_server.load("Rusty_Farm_World_2.ldtk");
-    // let ldtk_map_size = Vec2::new(1280., 720.); // replace with the actual size of your LDtk map
-    // let ldtk_center_offset = ldtk_map_size / 2.; // calculate the offset needed to center the map
-
-    // commands.spawn(LdtkWorldBundle {
-    //     ldtk_handle,
-    //     transform: Transform::from_translation(-ldtk_center_offset.extend(0.)), // apply the offset to the position
-    //     ..Default::default()
-    // });
     
     let window = windows.get_primary_mut().unwrap();
     window.set_title("Rusty Farm".to_string());

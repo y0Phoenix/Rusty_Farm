@@ -17,7 +17,8 @@ pub struct LdtkGate {
     #[bundle]
     pub sensor_bundle: SensorBundle,
     entity_instance: EntityInstance,
-    pub direction: AnimationDirection
+    pub direction: AnimationDirection,
+    pub ldtk: Ldtk
 }
 
 impl LdtkEntity for LdtkGate {
@@ -33,7 +34,7 @@ impl LdtkEntity for LdtkGate {
 
         let texture_atlas = TextureAtlas::from_grid(
             texture,
-            Vec2::new(32., 16.),
+            Vec2::new(32., 50.),
             3,
             1,
             None,
@@ -54,7 +55,8 @@ impl LdtkEntity for LdtkGate {
                 ..Default::default()
             },
             entity_instance: entity_instance.clone(),
-            direction: AnimationDirection::default() 
+            direction: AnimationDirection::default() ,
+            ldtk: Ldtk
         }
     }
 }

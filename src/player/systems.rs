@@ -54,6 +54,7 @@ pub fn movement(
     level_query: Query<(&Handle<LdtkLevel>, &Transform), (Without<Player>, Without<Camera2d>)>,
     ldtk_levels: Res<Assets<LdtkLevel>>,
     mut animation_event_writer: EventWriter<AnimationEvent>,
+    mut reset_animation_event_writer: EventWriter<ResetAnimationEvent>,
     animations: ResMut<Animations>,
 ) {
     let (player_entity, mut transform, mut vel, mut direction, _) = match player_query.get_single_mut(){
@@ -80,8 +81,8 @@ pub fn movement(
             KeyCode::W => dir = AnimationDirection::Up,
             KeyCode::LShift => {
                 running = true;
-                vel.linvel.x = 3.15;
-                vel.linvel.y = 3.15;
+                vel.linvel.x = PLAYER_RUNNUNG_VEL;
+                vel.linvel.y = PLAYER_RUNNUNG_VEL;
             }
             _ => {}
         }
@@ -91,8 +92,8 @@ pub fn movement(
 
     if *direction != AnimationDirection::default() {
         if !running {
-            vel.linvel.x = 2.65;
-            vel.linvel.y = 2.65;
+            vel.linvel.x = PLAYER_WALKING_VEL;
+            vel.linvel.y = PLAYER_WALKING_VEL;
             animation_event_writer.send(AnimationEvent("player_walking", player_entity));
         } 
         else {

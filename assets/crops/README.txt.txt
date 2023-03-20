@@ -1,0 +1,1 @@
+all highlighted crop sprites are at 95 brightness

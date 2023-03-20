@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
+use load_atlases::load_altases;
+use ui::UIPlugin;
 // use bevy_animations::*;
 use crate::{bevy_animations::*, player::*, crop::*};
 use bevy_rapier2d::prelude::*;
@@ -13,15 +15,25 @@ mod ldtk;
 mod bevy_animations;
 mod gate;
 mod animations;
+mod load_atlases;
+mod ui;
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash, Default)]
 pub enum GameState {
     #[default]
     LoadingAssets,
+    LoadingAtlases,
     LoadingLdtk,
     LoadingAnimations,
-    Loaded
+    LoadingGameMenu,
+    Game,
+    Unload,
+    LoadinMainMenu,
+    MainMenu,
 }
+
+#[derive(Resource, Default)]
+pub struct NextState(GameState);
 
 pub const EDGE_BUFFER: f32 = 25.;
 
@@ -53,17 +65,29 @@ pub struct OtherAssets {
     player: Handle<Image>,
     #[asset(path = "buildings/fence_gate.png")]
     gate: Handle<Image>,
+    #[asset(path = "crops/corn_growth.png")]
+    corn_growth: Handle<Image>,
+    #[asset(path = "crops/corn_growth_highlighted.png")]
+    corn_growth_highlighted: Handle<Image>,
+    #[asset(path = "crops/dead_crop.png")]
+    dead_crop: Handle<Image>,
+    #[asset(path = "crops/dead_crop_highlighted.png")]
+    dead_crop_highlighted: Handle<Image>,
 }
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
+        .add_plugin(UIPlugin)
         .add_state::<GameState>(GameState::default())
         .add_loading_state(
             LoadingState::new(GameState::LoadingAssets)
-                .continue_to_state(GameState::LoadingLdtk)
+                .continue_to_state(GameState::LoadingAtlases)
                 .with_collection::<LdtkAssets>()
                 .with_collection::<OtherAssets>()
+        )
+        .add_system_set(SystemSet::on_enter(GameState::LoadingAtlases)
+            .with_system(load_altases)
         )
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(20.0))
         .add_plugin(AnimationsPlugin {
@@ -76,8 +100,9 @@ fn main() {
             gravity: Vec2::ZERO,
             ..Default::default()
         })
+        .insert_resource(NextState::default())
         .add_plugin(PlayerPlugin)
-        // .add_plugin(CropPlugin)
+        .add_plugin(CropPlugin)
         // .add_system_set(SystemSet::on_enter(GameState::Loaded)
         //     .with_system(setup)
         // )

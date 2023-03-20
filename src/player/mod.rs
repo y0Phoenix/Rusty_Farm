@@ -15,7 +15,10 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_system_set(SystemSet::on_update(GameState::Loaded)
+            .add_system_set(SystemSet::on_enter(GameState::Game)
+                .with_system(spawn_extra_colliders)
+            )
+            .add_system_set(SystemSet::on_update(GameState::Game)
                 .with_system(movement)
                 .with_system(check_gate_collisions)
                 .with_system(center_camera_around_player)
@@ -25,7 +28,16 @@ impl Plugin for PlayerPlugin {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
-pub struct Player;
+pub struct Player {
+    pub crop_colliding: Option<Entity>,
+    pub previous_crop_colliding: Option<Entity>,
+}
+
+#[derive(Component)]
+pub struct PlayerFootCollider;
+
+#[derive(Component)]
+pub struct PlayerLargeCollider;
 
 #[derive(Clone, Default, Bundle)]
 pub struct LdtkPlayer {
@@ -61,9 +73,9 @@ impl LdtkEntity for LdtkPlayer {
         }
         LdtkPlayer { 
             sprite_sheet_bundle: SpriteSheetBundle::default(),
-            player: Player,
+            player: Player::default(),
             collider_bundle: ColliderBundle { 
-                collider: Collider::cuboid(8., 18.), 
+                collider: Collider::cuboid(4., 18.), 
                 rigid_body: RigidBody::Dynamic, 
                 velocity: Velocity { linvel: Vec2::new(linvel, linvel), angvel: 0. }, 
                 rotation_constraints: LockedAxes::ROTATION_LOCKED,
@@ -72,7 +84,7 @@ impl LdtkEntity for LdtkPlayer {
                     angular_damping: 100.
                 },
                 ..Default::default()
-            } ,
+            },
             entity_instance: entity_instance.clone(),
             direction: AnimationDirection::default(),
             ldtk: Ldtk

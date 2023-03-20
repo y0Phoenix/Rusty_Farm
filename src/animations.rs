@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::{bevy_animations::*, player::*, gate::*, OtherAssets, GameState};
+use crate::{bevy_animations::*, player::*, gate::*, OtherAssets, GameState, load_atlases::Atlases};
 
 // gate configs
 pub const GATE_OPENING_FRAMES: [usize; 3] = [0, 1, 2];
@@ -25,24 +25,15 @@ pub fn set_animations(
     ), Without<Player>>,
     mut animations: ResMut<Animations>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    textures: Res<OtherAssets>,
+    atlases: Res<Atlases>,
     mut state: ResMut<State<GameState>>
 ) {
     //  the player entity might not be loaded in yet
     let (player_entity, mut player_texture, _) = player_query.single_mut();
-
     
-    let gate = textures.gate.clone();
-    let farming = textures.player_farming.clone();
-    let farmer = textures.player.clone();    
-    
-    let gate_atlas = TextureAtlas::from_grid(gate, Vec2::new(32., 50.), 3, 1, None, Some(Vec2::new(16., 16.)));
-    let farmer_atlas = TextureAtlas::from_grid(farmer, Vec2::new(64., 64.), 8, 8, None, None);
-    let farming_atlas = TextureAtlas::from_grid(farming, Vec2::new(64., 64.), 4, 4,None, None);
-    
-    let farmer_handle = texture_atlases.add(farmer_atlas);
-    let farming_handle = texture_atlases.add(farming_atlas);
-    let gate_handle = texture_atlases.add(gate_atlas);
+    let farmer_handle = atlases.handles.get("player").unwrap(); 
+    let farming_handle = atlases.handles.get("player_farming").unwrap();
+    let gate_handle = atlases.handles.get("gate").unwrap();
 
     *player_texture = farmer_handle.clone();
     
@@ -63,7 +54,7 @@ pub fn set_animations(
             TransformAnimation::new(
                 Vec::from(RUNNUNG_ANIMATION_FRAMES), 
                 0.75, 
-                farmer_handle, 
+                farmer_handle.clone(), 
                 Vec2::new(8., 8.), 
                 AnimationDirectionIndexes::new(8, 7, 6, 5), 
                 true
@@ -75,7 +66,7 @@ pub fn set_animations(
             TimedAnimation::new(
                 Vec::from(HARVESTING_ANIMATION_FRAMES), 
                 Vec::from(PLAYER_HARVESTING_TIMINGS), 
-                farming_handle, 
+                farming_handle.clone(), 
                 Vec2::new(4., 4.), 
                 AnimationDirectionIndexes::new(4, 3, 2, 1), 
                 false, 
@@ -116,8 +107,5 @@ pub fn set_animations(
             );
         }
     }
-    match state.overwrite_replace(GameState::Loaded) {
-        Ok(_) => {},
-        Err(_) => {}
-    }
+    state.overwrite_replace(GameState::LoadingGameMenu).unwrap();
 }

@@ -164,3 +164,31 @@ pub fn center_camera_around_player(
         }
     }
 }
+
+pub fn spawn_extra_colliders(
+    mut commands: Commands,
+    player_query: Query<Entity, With<Player>>
+) {
+    let player_entity = player_query.single();
+    commands.entity(player_entity)
+        .with_children(|children| {
+            // first sensor collider is for the feet
+            children.spawn(SensorBundle {
+                collider: Collider::cuboid(4., 1.),
+                sensor: Sensor,
+                ..Default::default()
+            })
+                .insert(PlayerFootCollider)
+                .insert(TransformBundle::from(Transform::from_xyz(0., -8., 0.)))
+            ;
+            // second sensor collider is just a larger one mainly for crop collision detection
+            children.spawn(SensorBundle {
+                collider: Collider::cuboid(4., 24.),
+                sensor: Sensor,
+                ..Default::default()
+            })
+                .insert(PlayerLargeCollider)
+            ;
+        })
+    ;
+}

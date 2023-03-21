@@ -167,7 +167,8 @@ pub fn center_camera_around_player(
 
 pub fn spawn_extra_colliders(
     mut commands: Commands,
-    player_query: Query<Entity, With<Player>>
+    player_query: Query<Entity, With<Player>>,
+    mut state: ResMut<State<GameState>>
 ) {
     let player_entity = player_query.single();
     commands.entity(player_entity)
@@ -191,4 +192,5 @@ pub fn spawn_extra_colliders(
             ;
         })
     ;
+    let _ = state.overwrite_set(GameState::Game);
 }

@@ -45,5 +45,5 @@ pub fn load_altases(
         handles: map
     });
 
-    state.overwrite_set(GameState::LoadinMainMenu).unwrap();
+    state.overwrite_set(GameState::LoadingMainMenu).unwrap();
 }

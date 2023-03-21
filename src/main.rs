@@ -26,9 +26,12 @@ pub enum GameState {
     LoadingLdtk,
     LoadingAnimations,
     LoadingGameMenu,
+    LoadingGame,
     Game,
+    LoadingPause,
+    Pause,
     Unload,
-    LoadinMainMenu,
+    LoadingMainMenu,
     MainMenu,
 }
 
@@ -107,7 +110,7 @@ fn main() {
         //     .with_system(setup)
         // )
         .add_startup_system(setup)
-        .add_system(bevy::window::close_on_esc)
+        // .add_system(bevy::window::close_on_esc)
         // .add_system(display_events)
         .run();
 }

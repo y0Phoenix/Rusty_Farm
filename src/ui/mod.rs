@@ -25,7 +25,7 @@ impl Plugin for UIPlugin {
                 .with_system(game_menu_setup)
             )
             .add_system_set(SystemSet::on_update(GameState::Game)
-                .with_system(game_button_system)
+                .with_system(game_ui_interact_system)
             )
             .add_system_set(SystemSet::on_enter(GameState::Unload)
                 .with_system(unload)
@@ -38,6 +38,7 @@ impl Plugin for UIPlugin {
             )
             .add_system_set(SystemSet::on_update(GameState::Pause)
                 .with_system(handle_pause_menu_input)
+                .with_system(check_pause_input)
             )
         ;
     }

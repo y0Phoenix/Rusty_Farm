@@ -28,6 +28,8 @@ pub enum GameState {
     LoadingGameMenu,
     LoadingGame,
     Game,
+    LoadingInventory,
+    Inventory,
     LoadingPause,
     Pause,
     Unload,
@@ -59,6 +61,19 @@ pub struct LdtkAssets {
     #[asset(path = "Rusty_Farm_World.ldtk")]
     ldtk_world: Handle<LdtkAsset>
 }
+#[derive(AssetCollection, Resource)]
+pub struct IconAssets {
+    #[asset(path = "icons/potato.png")]
+    potato: Handle<Image>,
+    #[asset(path = "icons/cabbage.png")]
+    cabbage: Handle<Image>,
+    #[asset(path = "icons/corn.png")]
+    corn: Handle<Image>,
+    #[asset(path = "icons/carrot.png")]
+    carrot: Handle<Image>,
+    #[asset(path = "icons/backpack.png")]
+    backpack: Handle<Image>,
+}
 
 #[derive(AssetCollection, Resource)]
 pub struct OtherAssets {
@@ -88,6 +103,7 @@ fn main() {
                 .continue_to_state(GameState::LoadingAtlases)
                 .with_collection::<LdtkAssets>()
                 .with_collection::<OtherAssets>()
+                .with_collection::<IconAssets>()
         )
         .add_system_set(SystemSet::on_enter(GameState::LoadingAtlases)
             .with_system(load_altases)

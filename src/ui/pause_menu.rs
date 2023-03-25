@@ -8,12 +8,20 @@ use super::{*, colors::*};
 pub struct PauseMenu;
 
 pub fn check_pause_input(
-    inputs: Res<Input<KeyCode>>,
-    mut state: ResMut<State<GameState>>
+    mut inputs: ResMut<Input<KeyCode>>,
+    mut state: ResMut<State<GameState>>,
+    mut commands: Commands,
+    pause_menu_query: Query<Entity, With<PauseMenu>>
 ) {
-    for key in inputs.get_pressed() {
-        if key == &KeyCode::Escape {
+    if inputs.pressed(KeyCode::Escape) {
+        if state.current() == &GameState::Game {
             state.overwrite_set(GameState::LoadingPause).unwrap();
+            inputs.reset_all();
+        }
+        else if state.current() == &GameState::Pause {
+            state.overwrite_set(GameState::Game).unwrap();
+            commands.entity(pause_menu_query.single()).despawn_recursive();
+            inputs.reset_all();
         }
     }
 }
@@ -150,7 +158,7 @@ pub fn handle_pause_menu_input(
     pause_menu_query: Query<Entity, With<PauseMenu>>,
     mut app_state: ResMut<State<GameState>>,
     mut next_state: ResMut<NextState>,
-    mut app_exit: ResMut<Events<AppExit>>
+    mut app_exit: ResMut<Events<AppExit>>,
 ) {
     let pause_menu = pause_menu_query.single();
 

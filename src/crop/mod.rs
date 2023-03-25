@@ -15,7 +15,7 @@ pub struct CropPlugin;
 impl Plugin for CropPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_system_set(SystemSet::on_enter(GameState::Game)
+            .add_system_set(SystemSet::on_enter(GameState::LoadingGame)
                 .with_system(spawn_crops)
             )
             .add_system_set(SystemSet::on_update(GameState::Game)

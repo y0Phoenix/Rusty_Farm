@@ -53,7 +53,7 @@ pub fn unload(
     mut next_state: ResMut<NextState>
 ) {
     for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
     state.overwrite_set(next_state.0.clone()).unwrap();
     next_state.0 = GameState::default();

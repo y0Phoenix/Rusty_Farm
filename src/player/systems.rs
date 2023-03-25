@@ -54,7 +54,6 @@ pub fn movement(
     level_query: Query<(&Handle<LdtkLevel>, &Transform), (Without<Player>, Without<Camera2d>)>,
     ldtk_levels: Res<Assets<LdtkLevel>>,
     mut animation_event_writer: EventWriter<AnimationEvent>,
-    mut reset_animation_event_writer: EventWriter<ResetAnimationEvent>,
     animations: ResMut<Animations>,
 ) {
     let (player_entity, mut transform, mut vel, mut direction, _) = match player_query.get_single_mut(){
@@ -91,42 +90,46 @@ pub fn movement(
     *direction = dir;
 
     if *direction != AnimationDirection::default() {
-        if !running {
-            vel.linvel.x = PLAYER_WALKING_VEL;
-            vel.linvel.y = PLAYER_WALKING_VEL;
-            animation_event_writer.send(AnimationEvent("player_walking", player_entity));
-        } 
-        else {
-            animation_event_writer.send(AnimationEvent("player_running", player_entity));
-        }
-
-        let translation = transform.translation;
-
-        for (level_handle, level_transform) in level_query.iter() {
-            let level = ldtk_levels.get(level_handle).unwrap();
-            let level_bounds = Rect {
-                min: Vec2::new(level_transform.translation.x, level_transform.translation.y),
-                max: Vec2::new(
-                    level_transform.translation.x + level.level.px_wid as f32,
-                    level_transform.translation.y + level.level.px_hei as f32,
-                ),
-            };
-            let new_transform = Transform::from_translation(
-                Vec3::new(
-                    translation.x + AnimationDirection::get_direction(&direction).x * vel.linvel.x, 
-                    translation.y + AnimationDirection::get_direction(&direction).y * vel.linvel.y, 
-                    translation.z
-                )
-            );
-            if new_transform.translation.x < level_bounds.max.x &&
-                new_transform.translation.x > level_bounds.min.x &&
-                new_transform.translation.y < level_bounds.max.y &&
-                new_transform.translation.y > level_bounds.min.y 
-            {
-                *transform = new_transform;
+        if let Some(in_animation) = animations.in_blocking_animation(player_entity) {
+            if in_animation {
+                return;
+            }
+            if !running {
+                vel.linvel.x = PLAYER_WALKING_VEL;
+                vel.linvel.y = PLAYER_WALKING_VEL;
+                animation_event_writer.send(AnimationEvent("player_walking", player_entity));
+            } 
+            else {
+                animation_event_writer.send(AnimationEvent("player_running", player_entity));
+            }
+    
+            let translation = transform.translation;
+    
+            for (level_handle, level_transform) in level_query.iter() {
+                let level = ldtk_levels.get(level_handle).unwrap();
+                let level_bounds = Rect {
+                    min: Vec2::new(level_transform.translation.x, level_transform.translation.y),
+                    max: Vec2::new(
+                        level_transform.translation.x + level.level.px_wid as f32,
+                        level_transform.translation.y + level.level.px_hei as f32,
+                    ),
+                };
+                let new_transform = Transform::from_translation(
+                    Vec3::new(
+                        translation.x + AnimationDirection::get_direction(&direction).x * vel.linvel.x, 
+                        translation.y + AnimationDirection::get_direction(&direction).y * vel.linvel.y, 
+                        translation.z
+                    )
+                );
+                if new_transform.translation.x < level_bounds.max.x &&
+                    new_transform.translation.x > level_bounds.min.x &&
+                    new_transform.translation.y < level_bounds.max.y &&
+                    new_transform.translation.y > level_bounds.min.y 
+                {
+                    *transform = new_transform;
+                }
             }
         }
-
     }
 }
 
@@ -193,4 +196,37 @@ pub fn spawn_extra_colliders(
         })
     ;
     let _ = state.overwrite_set(GameState::Game);
+}
+
+pub fn harvest_crop(
+    mut commands: Commands,
+    mut animation_event: EventWriter<AnimationEvent>,
+    animations: Res<Animations>,
+    mut player_query: Query<(&mut Player, Entity)>,
+    inputs: Res<Input<KeyCode>>
+) {
+    let (mut player, entity) = player_query.single_mut();
+
+    // check if we aren't in a blocking animation and we are in the harvesting state. If thats all true we should despawn the crop and set everything back to normal
+    if let Some(in_animation) = animations.in_blocking_animation(entity) {
+        if !in_animation && player.harvesting && player.crop_colliding.is_some() {
+            commands.entity(player.crop_colliding.unwrap()).despawn();
+            player.crop_colliding = None;
+            player.harvesting = false;
+            animation_event.send(AnimationEvent("player_walking", entity))
+        }
+    }
+
+    let mut input = false;
+
+    for key in inputs.get_pressed() {
+        if *key == KeyCode::Space {
+            input = true;
+        }
+    }
+
+    if player.crop_colliding.is_some() && input {
+        player.harvesting = true;
+        animation_event.send(AnimationEvent("player_harvesting", entity));
+    }
 }

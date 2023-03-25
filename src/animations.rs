@@ -10,7 +10,7 @@ pub const GATE_FRAME_TIMINGS: [f32; 3] = [0.001, 0.1, 0.1];
 pub const WALKING_ANIMATION_FRAMES: [usize; 6] = [0, 1, 2, 3, 4, 5];
 pub const RUNNUNG_ANIMATION_FRAMES: [usize; 6] = [0, 1, 6, 3, 4, 7];
 pub const HARVESTING_ANIMATION_FRAMES: [usize; 4] = [0, 1, 2, 3];
-pub const PLAYER_HARVESTING_TIMINGS: [f32; 4] = [0.001, 0.300, 0.350, 0.375];
+pub const PLAYER_HARVESTING_TIMINGS: [f32; 4] = [0.300, 0.300, 0.350, 0.375];
 
 pub fn set_animations(
     mut player_query: Query<(

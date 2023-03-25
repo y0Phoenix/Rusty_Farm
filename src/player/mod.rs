@@ -22,6 +22,7 @@ impl Plugin for PlayerPlugin {
                 .with_system(movement)
                 .with_system(check_gate_collisions)
                 .with_system(center_camera_around_player)
+                .with_system(harvest_crop)
             )
         ;
     }
@@ -31,6 +32,7 @@ impl Plugin for PlayerPlugin {
 pub struct Player {
     pub crop_colliding: Option<Entity>,
     pub previous_crop_colliding: Option<Entity>,
+    pub harvesting: bool,
 }
 
 #[derive(Component)]

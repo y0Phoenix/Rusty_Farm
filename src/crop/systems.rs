@@ -116,8 +116,7 @@ pub fn check_crop_collisions_to_highlight(
         if let Some(previous_colliding_entity) = player.previous_crop_colliding {
             let (mut texture, crop, _) = match crop_query.get_mut(previous_colliding_entity) {
                 Ok(q) => q,
-                Err(e) => {
-                    println!("{}", e);
+                Err(_) => {
                     return;
                 }
             };
@@ -132,8 +131,7 @@ pub fn check_crop_collisions_to_highlight(
         };
         let (mut texture, crop, _) = match crop_query.get_mut(colliding_entity) {
             Ok(q) => q,
-            Err(e) => {
-                println!("{}", e);
+            Err(_) => {
                 return;
             }
         };

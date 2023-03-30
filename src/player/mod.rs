@@ -1,7 +1,8 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
-use crate::{bevy_animations::*, ldtk::*, GameState};
+use serde::{Serialize, Deserialize};
+use crate::{bevy_animations::*, ldtk::*, GameState, mechanics::perspective::PrimaryPerspectiveBody, save::Savable};
 
 use self::systems::*;
 
@@ -28,7 +29,7 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component, Serialize, Deserialize)]
 pub struct Player {
     pub crop_colliding: Option<Entity>,
     pub previous_crop_colliding: Option<Entity>,
@@ -50,6 +51,8 @@ pub struct LdtkPlayer {
     pub collider_bundle: ColliderBundle,
     entity_instance: EntityInstance,
     pub direction: AnimationDirection,
+    pub perpective_body: PrimaryPerspectiveBody,
+    pub savable: Savable,
     pub ldtk: Ldtk
 }
 
@@ -88,8 +91,7 @@ impl LdtkEntity for LdtkPlayer {
                 ..Default::default()
             },
             entity_instance: entity_instance.clone(),
-            direction: AnimationDirection::default(),
-            ldtk: Ldtk
+            ..Default::default()
         }
     }
 }

@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
-use crate::{bevy_animations::*, ldtk::*, OtherAssets, player::{Player, PlayerFootCollider, PlayerLargeCollider}, load_atlases::Atlases};
+use crate::{bevy_animations::*, ldtk::*, OtherAssets, player::{Player, PlayerFootCollider, PlayerLargeCollider}, load_atlases::Atlases, mechanics::perspective::SecondaryPerspectiveBody};
 use rand::Rng;
 
 use super::*;
@@ -10,17 +10,25 @@ pub fn spawn_crops(
     mut commands: Commands,
     crop_field_query: Query<(&CropField, &Transform)>,
     atlases: Res<Atlases>,
+    mut game_state: ResMut<State<GameState>>
 ) {
 
     let handle = atlases.handles.get("corn_growth").unwrap().clone();
 
     for (_, transform) in crop_field_query.iter() {
-        let new_transform = Transform::from_translation(Vec3::new(transform.translation.x + 10., transform.translation.y + 20., transform.translation.z + 3.));
+        let new_transform = Transform::from_translation(Vec3::new(transform.translation.x + 10., transform.translation.y + 20., transform.translation.z + 5.));
         commands.spawn(SpriteSheetBundle {
             texture_atlas: handle.clone(),
-            transform: new_transform.clone(),
+            transform: new_transform,
             ..Default::default()
         })
+            .insert(SensorBundle {
+                collider: Collider::cuboid(8., 3.),
+                sensor: Sensor,
+                ..Default::default()
+            })
+            .insert(Savable)
+            .insert(SecondaryPerspectiveBody)
             .insert(Crop::new(CropType::Corn))
             .insert(RigidBody::KinematicPositionBased)
             .insert(AnimationTimer(Timer::from_seconds(CropType::duration_from(&CropType::Corn), TimerMode::Repeating)))
@@ -36,6 +44,7 @@ pub fn spawn_crops(
             })
         ;
     }
+    game_state.overwrite_set(GameState::LoadingAnimations).unwrap();
 }
 
 /// check collisions for killing the crop
@@ -83,6 +92,10 @@ pub fn check_crop_collisions_to_highlight(
     let mut player = player_query.single_mut();
     // this entity is the large collider for the whole player
     let player_entity = player_collider.single();
+
+    if player.harvesting {
+        return;
+    }
 
 
     let mut collision = false;
@@ -148,6 +161,11 @@ pub fn crop_liftime (
 ) {
     for (mut timer, mut crop, mut sprite) in crop_query.iter_mut() {
         timer.tick(time.delta());
+        // if we have changed the crop stage anywhere else we make sure to change the sprite as well
+        if sprite.index != crop.stage - 1 && crop.crop_type != CropType::Dead && crop.crop_type != CropType::DeadHighlighted {
+            println!("setting sprite index");
+            sprite.index = crop.stage - 1;
+        }
         if timer.finished() && crop.crop_type != CropType::Dead && crop.crop_type != CropType::DeadHighlighted {
             if crop.stage + 1 > 5 {
                 return;

@@ -101,6 +101,32 @@ pub fn setup_ui(
                     })
                     .with_children(|parent| {
                         parent.spawn(TextBundle::from_section(
+                            "Save",
+                            TextStyle {
+                                font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                font_size: 40.0,
+                                color: Color::rgb(0.9, 0.9, 0.9),
+                            },
+                        ));
+                    })
+                    .insert(PauseMenuItem::Save)
+                ;
+                parent
+                    .spawn(ButtonBundle {
+                        style: Style {
+                            size: Size::new(Val::Px(400.0), Val::Px(65.0)),
+                            // horizontally center child text
+                            justify_content: JustifyContent::Center,
+                            // vertically center child text
+                            align_items: AlignItems::Center,
+                            margin: UiRect::vertical(Val::Px(25.)),
+                            ..default()
+                        },
+                        background_color: NORMAL_BUTTON.into(),
+                        ..default()
+                    })
+                    .with_children(|parent| {
+                        parent.spawn(TextBundle::from_section(
                             "Exit To Main Menu",
                             TextStyle {
                                 font: asset_server.load("fonts/FiraSans-Bold.ttf"),
@@ -145,6 +171,7 @@ pub fn setup_ui(
 #[derive(Component, Debug, Clone, PartialEq, Eq)]
 pub enum PauseMenuItem {
     Resume,
+    Save,
     ExitToMain,
     Exit,
 }
@@ -180,6 +207,12 @@ pub fn handle_pause_menu_input(
                     // Handle Exit App
                     PauseMenuItem::Exit => {
                         app_exit.send(AppExit);
+                    },
+                    // Handle Save Game
+                    PauseMenuItem::Save => {
+                        app_state.overwrite_set(GameState::Saving).unwrap();
+                        next_state.0 = GameState::Game;
+                        commands.entity(pause_menu).despawn_recursive();
                     }
                 }
             },

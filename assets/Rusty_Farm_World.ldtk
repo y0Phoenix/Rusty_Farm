@@ -1489,7 +1489,7 @@
 					"entityInstances": [
 						{
 							"__identifier": "Player",
-							"__grid": [25,15],
+							"__grid": [43,29],
 							"__pivot": [0.5,1],
 							"__tags": [],
 							"__tile": { "tilesetUid": 51, "x": 0, "y": 0, "w": 64, "h": 64 },
@@ -1498,7 +1498,7 @@
 							"width": 64,
 							"height": 64,
 							"defUid": 50,
-							"px": [408,256],
+							"px": [696,480],
 							"fieldInstances": [
 								{ "__identifier": "velocity", "__value": 2.65, "__type": "Float", "__tile": null, "defUid": 60, "realEditorValues": [] },
 								{ "__identifier": "coins", "__value": 1, "__type": "Int", "__tile": null, "defUid": 61, "realEditorValues": [] }

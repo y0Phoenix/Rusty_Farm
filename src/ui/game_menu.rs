@@ -57,7 +57,7 @@ pub fn game_menu_setup(
             size: Size::new(Val::Px(INVENTORY_X_SIZE), Val::Px(INVENTORY_Y_SIZE)),
             flex_wrap: FlexWrap::Wrap,
             position_type: PositionType::Absolute,
-            position: UiRect::new(Val::Percent(30.), Val::Auto, Val::Percent(30.), Val::Auto),
+            position: UiRect::new(Val::Percent(27.), Val::Auto, Val::Percent(30.), Val::Auto),
             ..Default::default()
         },
         visibility: Visibility::INVISIBLE,

@@ -1,0 +1,733 @@
+(
+    date: "March 29 2023 at 14:8",
+    player_data: (
+        translation: (1151.3926, 703.64294, 204.0),
+        player: (
+            crop_colliding: None,
+            previous_crop_colliding: None,
+            harvesting: false,
+        ),
+    ),
+    crop_data: [
+        (
+            translation: (970.0, 708.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (970.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (970.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (970.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (970.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (986.0, 708.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (986.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (986.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (986.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (986.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1002.0, 708.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1002.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1002.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1002.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1002.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1018.0, 708.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1018.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1018.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1018.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1018.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1034.0, 708.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1034.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1034.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1034.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1034.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1050.0, 708.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1050.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1050.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1050.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1050.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1066.0, 708.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1066.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1066.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1066.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1066.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1082.0, 708.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1082.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1082.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1082.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1082.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1098.0, 708.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1098.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1098.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1098.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1098.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1178.0, 708.0, 203.5),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1178.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1178.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1178.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1178.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1194.0, 708.0, 203.5),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1194.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1194.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1194.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1194.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1210.0, 708.0, 203.5),
+            crop: (
+                stage: 5,
+                crop_type: Dead,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1210.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1210.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1210.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1210.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1226.0, 708.0, 203.5),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1226.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1226.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1226.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1226.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1242.0, 708.0, 203.5),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1242.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1242.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1242.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1242.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1258.0, 708.0, 203.5),
+            crop: (
+                stage: 5,
+                crop_type: Dead,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1258.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1258.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1258.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1258.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1274.0, 708.0, 203.5),
+            crop: (
+                stage: 5,
+                crop_type: Dead,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1274.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1274.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1274.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1274.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1290.0, 708.0, 203.5),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1290.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1290.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1290.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1290.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1306.0, 708.0, 203.5),
+            crop: (
+                stage: 5,
+                crop_type: Dead,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1306.0, 756.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1306.0, 804.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1306.0, 852.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+        (
+            translation: (1306.0, 900.0, 5.0),
+            crop: (
+                stage: 5,
+                crop_type: Corn,
+                in_collision: false,
+            ),
+        ),
+    ],
+)

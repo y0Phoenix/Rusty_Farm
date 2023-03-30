@@ -1,7 +1,7 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, log};
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
-use crate::{gate::*, player::*};
+use crate::{gate::*, player::*, OtherAssets};
 
 pub fn check_gate_collisions(
     mut gate_query: Query<(
@@ -56,10 +56,7 @@ pub fn movement(
     mut animation_event_writer: EventWriter<AnimationEvent>,
     animations: ResMut<Animations>,
 ) {
-    let (player_entity, mut transform, mut vel, mut direction, _) = match player_query.get_single_mut(){
-        Ok(p) => p,
-        Err(_) => return
-    };
+    let (player_entity, mut transform, mut vel, mut direction, _) = player_query.single_mut();
 
     // if we haven't initialized our animations yet
     if !animations.is_inserted(&player_entity) {
@@ -171,7 +168,7 @@ pub fn center_camera_around_player(
 pub fn spawn_extra_colliders(
     mut commands: Commands,
     player_query: Query<Entity, With<Player>>,
-    mut state: ResMut<State<GameState>>
+    mut state: ResMut<State<GameState>>,
 ) {
     let player_entity = player_query.single();
     commands.entity(player_entity)
@@ -195,6 +192,7 @@ pub fn spawn_extra_colliders(
             ;
         })
     ;
+    log::info!("spawing player colliders");
     let _ = state.overwrite_set(GameState::Game);
 }
 

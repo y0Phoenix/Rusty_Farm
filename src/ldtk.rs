@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 // use bevy_animations::*;
-use crate::{gate::*, animations::*, player::*, path::*, crop::*, LdtkAssets, GameState};
+use crate::{gate::*, animations::*, player::*, path::*, crop::*, LdtkAssets, GameState, save::SaveName};
 use bevy_ecs_ldtk::{prelude::*, ldtk::Level};
 
 use bevy_rapier2d::prelude::*;
@@ -98,10 +98,14 @@ fn spawn_world(
 
 fn check_ldtk_entities(
     query: Query<&Ldtk>,
-    mut state: ResMut<State<GameState>>
+    mut state: ResMut<State<GameState>>,
+    save_name: Res<SaveName>
 ) {
     if !query.is_empty() {
-        state.set(GameState::LoadingAnimations).expect("Something Went Wrong Changing State To Loaded");
-        return;
+        if save_name.name().is_none() {
+            state.overwrite_set(GameState::LoadingNewGame).unwrap();
+            return;
+        }
+        state.set(GameState::LoadingSave).expect("Something Went Wrong Changing State To Loaded");
     }
 }

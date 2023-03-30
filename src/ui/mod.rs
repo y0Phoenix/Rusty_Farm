@@ -9,17 +9,33 @@ mod pause_menu;
 mod game_menu;
 mod colors;
 
+#[derive(Clone, Eq, PartialEq, Debug, Hash, Default)]
+pub enum MainMenuState {
+    #[default]
+    NotActive,
+    Landing,
+    LoadingLoadGame,
+    LoadGame,
+}
+
 pub struct UIPlugin;
 
 impl Plugin for UIPlugin {
     fn build(&self, app: &mut App) {
         app
+            .add_state(MainMenuState::default())
             // .insert_resource(WinitSettings::desktop_app())
             .add_system_set(SystemSet::on_enter(GameState::LoadingMainMenu)
                 .with_system(main_menu_setup)
             )
-            .add_system_set(SystemSet::on_update(GameState::MainMenu)
-                .with_system(button_system)
+            .add_system_set(SystemSet::on_update(MainMenuState::Landing)
+                .with_system(landing_button_system)
+            )
+            .add_system_set(SystemSet::on_update(MainMenuState::LoadGame)
+                .with_system(load_game_button_system)
+            )
+            .add_system_set(SystemSet::on_enter(MainMenuState::LoadingLoadGame)
+                .with_system(load_game_menu_setup)
             )
             .add_system_set(SystemSet::on_enter(GameState::LoadingGameMenu)
                 .with_system(game_menu_setup)

@@ -1,9 +1,11 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, log};
 use bevy_asset_loader::prelude::*;
 use load_atlases::load_altases;
+use mechanics::perspective::PerspectiveMechanicsPlugin;
+use save::SavePlugin;
 use ui::UIPlugin;
 // use bevy_animations::*;
-use crate::{bevy_animations::*, player::*, crop::*};
+use crate::{bevy_animations::*, player::*, crop::*, mechanics::*};
 use bevy_rapier2d::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use ldtk::FarmWorldPlugin;
@@ -17,6 +19,8 @@ mod gate;
 mod animations;
 mod load_atlases;
 mod ui;
+mod mechanics;
+mod save;
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash, Default)]
 pub enum GameState {
@@ -24,6 +28,8 @@ pub enum GameState {
     LoadingAssets,
     LoadingAtlases,
     LoadingLdtk,
+    LoadingSave,
+    LoadingNewGame,
     LoadingAnimations,
     LoadingGameMenu,
     LoadingGame,
@@ -32,13 +38,32 @@ pub enum GameState {
     Inventory,
     LoadingPause,
     Pause,
-    Unload,
     LoadingMainMenu,
     MainMenu,
+    Unload,
+    Saving,
 }
 
-#[derive(Resource, Default)]
+#[derive(Resource, Default, PartialEq, Eq)]
 pub struct NextState(GameState);
+
+#[derive(Debug, Resource, PartialEq, Eq)]
+pub enum OldState {
+    GameState(GameState),
+    NextState(GameState)
+}
+
+impl OldState {
+    fn default() -> Self {
+        Self::GameState(GameState::default())
+    }
+    fn game_state(&self) -> Option<&GameState> {
+        match self {
+            OldState::GameState(game_state) => Some(game_state),
+            _ => None
+        }
+    }
+}
 
 pub const EDGE_BUFFER: f32 = 25.;
 
@@ -96,7 +121,14 @@ pub struct OtherAssets {
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
+        .add_plugin(RapierDebugRenderPlugin::default())
+        .add_plugin(PlayerPlugin)
+        .add_plugin(CropPlugin)
         .add_plugin(UIPlugin)
+        .add_plugin(LdtkPlugin)
+        .add_plugin(FarmWorldPlugin)
+        .add_plugin(PerspectiveMechanicsPlugin)
+        .add_plugin(SavePlugin)
         .add_state::<GameState>(GameState::default())
         .add_loading_state(
             LoadingState::new(GameState::LoadingAssets)
@@ -112,21 +144,14 @@ fn main() {
         .add_plugin(AnimationsPlugin {
             pixels_per_meter: 20.
         })
-        .add_plugin(LdtkPlugin)
-        .add_plugin(FarmWorldPlugin)
-        // .add_plugin(RapierDebugRenderPlugin::default())
         .insert_resource(RapierConfiguration {
             gravity: Vec2::ZERO,
             ..Default::default()
         })
         .insert_resource(NextState::default())
-        .add_plugin(PlayerPlugin)
-        .add_plugin(CropPlugin)
-        // .add_system_set(SystemSet::on_enter(GameState::Loaded)
-        //     .with_system(setup)
-        // )
+        .insert_resource(OldState::default())
         .add_startup_system(setup)
-        // .add_system(bevy::window::close_on_esc)
+        .add_system(debug_state)
         // .add_system(display_events)
         .run();
 }
@@ -136,4 +161,14 @@ fn setup(mut commands: Commands, mut windows: ResMut<Windows>) {
     
     let window = windows.get_primary_mut().unwrap();
     window.set_title("Rusty Farm".to_string());
+}
+
+fn debug_state(
+    game_state: Res<State<GameState>>,
+    mut old_state: ResMut<OldState>
+) {
+    if *game_state.current() != *old_state.game_state().unwrap() {
+        log::info!("state changed to {:?}", game_state.current());
+        *old_state = OldState::GameState(game_state.current().clone()); 
+    }
 }

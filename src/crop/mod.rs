@@ -4,7 +4,8 @@ use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
 use rand::Rng;
-use crate::{bevy_animations::*, ldtk::*, crop::systems::*, GameState};
+use serde::{Serialize, Deserialize};
+use crate::{bevy_animations::*, ldtk::*, crop::systems::*, GameState, save::Savable, mechanics::perspective::SecondaryPerspectiveBody};
 
 // the crops chance to die from the player stepping on it
 pub const CROP_KILL_CHANCE: i32 = 30;
@@ -15,13 +16,13 @@ pub struct CropPlugin;
 impl Plugin for CropPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_system_set(SystemSet::on_enter(GameState::LoadingGame)
-                .with_system(spawn_crops)
-            )
             .add_system_set(SystemSet::on_update(GameState::Game)
                 .with_system(check_crop_foot_collisions.label("foot"))
                 .with_system(check_crop_collisions_to_highlight.after("foot").label("highlight"))
                 .with_system(crop_liftime.after("highlight"))
+            )
+            .add_system_set(SystemSet::on_enter(GameState::LoadingNewGame)
+                .with_system(spawn_crops)
             )
         ;
     }
@@ -34,20 +35,20 @@ pub struct CropField;
 pub struct CropFieldBundle {
     #[bundle]
     pub crop_field: CropField,
-    ldtk: Ldtk
+    pub ldtk: Ldtk
 }
 
 impl LdtkIntCell for CropFieldBundle {
     fn bundle_int_cell(_: IntGridCell, _: &LayerInstance) -> Self {
-        Self { 
-            crop_field: CropField,
-            ldtk: Ldtk
+        Self {
+            ..Default::default()
         }
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone, Component, Default)]
 pub enum CropType {
+    #[default]
     Potato,
     PotatoHighlighted,
     CarrotHighlighted,
@@ -114,8 +115,8 @@ impl CropType {
             CropType::CornHighlighted => rng.gen_range(45..65) as f32,
             CropType::Cabbage => rng.gen_range(100..125) as f32,
             CropType::CabbageHighlighted => rng.gen_range(100..125) as f32,
-            CropType::Dead => 0.,
-            CropType::DeadHighlighted => 0.,
+            CropType::Dead => 1.,
+            CropType::DeadHighlighted => 1.,
         }
     }
     pub fn duration_from(value: &CropType) -> f32 {
@@ -129,13 +130,13 @@ impl CropType {
             CropType::CornHighlighted => rng.gen_range(45..65) as f32,
             CropType::Cabbage => rng.gen_range(100..125) as f32,
             CropType::CabbageHighlighted => rng.gen_range(100..125) as f32,
-            CropType::Dead => 0.,
-            CropType::DeadHighlighted => 0.,
+            CropType::Dead => 1.,
+            CropType::DeadHighlighted => 1.,
         }
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Crop {
     pub stage: usize,
     pub crop_type: CropType,
@@ -148,6 +149,40 @@ impl Crop {
             stage: 1, 
             crop_type,
             in_collision: false
+        }
+    }
+}
+
+#[derive(Bundle, Default)]
+pub struct CropBundle {
+    #[bundle]
+    pub sprite_sheet_bundle: SpriteSheetBundle,
+    #[bundle]
+    pub sensor_bundle: SensorBundle,
+    pub savable: Savable,
+    pub secondary_perpective_body: SecondaryPerspectiveBody,
+    pub rigid_body: RigidBody,
+    pub animation_timer: AnimationTimer,
+    pub crop: Crop
+}
+
+#[derive(Bundle)]
+pub struct SmallCropColliderBundle {
+    sensor_bundle: SensorBundle,
+    transform_bundle: TransformBundle,
+    crop_collider: CropCollider
+}
+
+impl Default for SmallCropColliderBundle {
+    fn default() -> Self {
+        Self { 
+            sensor_bundle: SensorBundle {
+                collider: Collider::cuboid(1.5, 2.5),
+                sensor: Sensor,
+                ..Default::default()
+            }, 
+            transform_bundle: TransformBundle::from(Transform::from_xyz(0., -12., 0.)), 
+            crop_collider: CropCollider 
         }
     }
 }
